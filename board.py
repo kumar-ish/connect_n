@@ -18,9 +18,11 @@ class Board:
     DEFAULT_N = 4
 
     def __init__(self, width: int, height: int, n: int):
-        assert width > 0
-        assert height > 0
-        assert n > 0 and n <= max(width, height)
+        assert width > 0, "Width must be greater than 0"
+        assert height > 0, "Height must be greater than 0"
+        assert n > 0 and n <= max(
+            width, height
+        ), "Win not possible with dimensions and `n` combination"
 
         self._width = width
         self._height = height
