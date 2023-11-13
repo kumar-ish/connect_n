@@ -1,4 +1,5 @@
 import itertools
+from argparse import ArgumentParser
 from enum import Enum
 from typing import Optional
 
@@ -12,8 +13,11 @@ class Board:
     _DIRECTIONS = set(itertools.product([-1, 0, 1], [-1, 0, 1])) - set(
         [(0, 0), (-1, 0)]
     )
+    DEFAULT_WIDTH = 7
+    DEFAULT_HEIGHT = 6
+    DEFAULT_N = 4
 
-    def __init__(self, width: int = 7, height: int = 6, n: int = 4):
+    def __init__(self, width: int, height: int, n: int):
         assert width > 0
         assert height > 0
         assert n > 0 and n <= max(width, height)
@@ -26,6 +30,10 @@ class Board:
             [None for _ in range(width)] for _ in range(height)
         ]
         self.num_cells_empty = width * height
+
+    @classmethod
+    def default_board(cls):
+        return cls(width=cls.DEFAULT_WIDTH, height=cls.DEFAULT_HEIGHT, n=cls.DEFAULT_N)
 
     def _add_cell(self, column: int, player: Player) -> Optional[int]:
         if column < 0 or column >= self._width:
@@ -79,9 +87,9 @@ class Board:
         )
 
 
-def main():
+def play(width: int, height: int, n: int):
     while True:
-        board = Board()
+        board = Board(width=width, height=height, n=n)
         print(board)
         player = Player.RED
         while True:
@@ -114,6 +122,25 @@ def main():
 
         print("Thanks for playing! :) ")
         break
+
+
+def main():
+    parser = ArgumentParser(description="Connect-N game")
+    parser.add_argument(
+        "--width", type=int, default=Board.DEFAULT_WIDTH, help="Width of the board"
+    )
+    parser.add_argument(
+        "--height", type=int, default=Board.DEFAULT_HEIGHT, help="Height of the board"
+    )
+    parser.add_argument(
+        "--n", type=int, default=Board.DEFAULT_N, help="Number of cells in a row to win"
+    )
+    args = parser.parse_args()
+
+    try:
+        play(args.width, args.height, args.n)
+    except KeyboardInterrupt:
+        print("\nThanks for playing :) ")
 
 
 if __name__ == "__main__":
